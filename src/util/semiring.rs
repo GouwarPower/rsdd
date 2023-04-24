@@ -14,8 +14,9 @@ pub trait Semiring: Debug + Clone + Copy + ops::Add + ops::Mul {
     fn zero() -> Self;
 }
 
+
 /// Simple real-number semiring abstraction (all operations standard for reals, abstracted as f64)
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct RealSemiring(pub f64);
 
 impl Display for RealSemiring {
@@ -145,5 +146,16 @@ impl Semiring for ExpectedUtility {
 
     fn zero() -> Self {
         ExpectedUtility(0.0, 0.0)
+    }
+}
+
+pub trait OrderedSemiring : Semiring + PartialOrd { 
+    fn meet(&self, other:&Self) -> Self;
+}
+
+
+impl OrderedSemiring for RealSemiring { 
+    fn meet(&self, other:&Self) -> Self {
+        RealSemiring(f64::max(self.0, other.0))
     }
 }
